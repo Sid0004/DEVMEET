@@ -3,9 +3,11 @@ import Link from "next/link";
 
 const LandingPage = () => {
   return (
-    <section className="w-full bg-white flex items-center justify-center" style={{ minHeight: '60vh' }}>
-      <div className="w-full max-w-2xl mx-auto px-4 py-12 text-center flex flex-col items-center justify-center">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+    <section className="w-full bg-white flex items-center  h-screen">
+
+    <div className="w-full  mx-auto px-4 pt-8 text-center flex flex-col items-center">
+
+        <h1 className="text-4xl   mt-[-50px] sm:text-7xl font-bold mb-4 text-black-900 whitespace-nowrap overflow-hidden border-r-4 border-gray-900 animate-typing">
           Connect. Code. Create.
         </h1>
         <p className="text-base sm:text-lg text-gray-600 mb-8">
@@ -13,12 +15,12 @@ const LandingPage = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/sign-up">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-7 py-3 text-base font-medium shadow">
+            <Button  className="h-9 w-20 " >
               Get Started
             </Button>
           </Link>
           <Link href="/features">
-            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-7 py-3 text-base font-medium">
+            <Button variant="outline" className="h-9 w-20 ">
               Learn More
             </Button>
           </Link>

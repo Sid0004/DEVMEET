@@ -26,7 +26,7 @@ const Header = () => {
       <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-2xl font-extrabold tracking-tight">
-          DevMeet
+        &lt;/&gt; DevMeet
         </Link>
 
         {/* Desktop Navigation */}
@@ -88,12 +88,12 @@ const Header = () => {
           ) : (
             <div className="hidden md:flex items-center gap-4">
               <Link href="/sign-in">
-                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors px-8 py-2">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors px-8 h-9 w-14 py-2">
                   Sign in
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 h-9 w-14 transition-colors">
                   Sign up
                 </Button>
               </Link>
