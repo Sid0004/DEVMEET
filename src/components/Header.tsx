@@ -1,10 +1,10 @@
 'use client';
 
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, Code2, Users, Calendar, Rocket } from 'lucide-react';
 import Image from 'next/image';
 
 const Header = () => {
@@ -15,13 +15,15 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
-  return (
-  
- <header
-  className="sticky top-0  z-50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] "
->
-  <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+  const DefaultAvatar = () => (
+    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-2 border-white">
+      <User className="w-5 h-5 text-white" />
+    </div>
+  );
 
+  return (
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px]">
+      <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-2xl font-extrabold tracking-tight">
           DevMeet
@@ -36,7 +38,7 @@ const Header = () => {
             Community
           </Link>
           <Link href="/events" className="text-sm hover:text-blue-200 transition-colors">
-          Dashboard
+            Dashboard
           </Link>
         </nav>
 
@@ -49,13 +51,17 @@ const Header = () => {
                 onClick={toggleUserMenu}
                 aria-label="User menu"
               >
-                <Image
-                  src={session.user?.image || '/default-avatar.png'}
-                  alt="Profile picture"
-                  width={32}
-                  height={32}
-                  className="rounded-full border-2 border-white"
-                />
+                {session.user?.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt="Profile picture"
+                    width={32}
+                    height={32}
+                    className="rounded-full border-2 border-white"
+                  />
+                ) : (
+                  <DefaultAvatar />
+                )}
                 <span className="hidden md:inline text-sm font-medium">
                   {session.user?.name || session.user?.email}
                 </span>
@@ -81,20 +87,16 @@ const Header = () => {
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-4">
-              <Button
-               
-                className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors px-8 py-2"
-                onClick={() => signIn('github')}
-              >
-                Sign in
-              </Button>
-              <Button
-             
-                className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors"
-                onClick={() => signIn('github')}
-              >
-                Sign up
-              </Button>
+              <Link href="/sign-in">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors px-8 py-2">
+                  Sign in
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors">
+                  Sign up
+                </Button>
+              </Link>
             </div>
           )}
 
@@ -113,37 +115,29 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-blue-700 py-4">
           <nav className="flex flex-col items-center gap-4">
-            <Link
-              href="/features"
-              className="text-sm hover:text-blue-200 transition-colors"
-              onClick={toggleMenu}
-            >
+            <Link href="/features" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Features
             </Link>
-            <Link
-              href="/community"
-              className="text-sm hover:text-blue-200 transition-colors"
-              onClick={toggleMenu}
-            >
+            <Link href="/community" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Community
             </Link>
-            <Link
-              href="/events"
-              className="text-sm hover:text-blue-200 transition-colors"
-              onClick={toggleMenu}
-            >
+            <Link href="/events" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Dashboard
             </Link>
             {session ? (
               <>
                 <div className="flex items-center gap-2">
-                  <Image
-                    src={session.user?.image || '/default-avatar.png'}
-                    alt="Profile picture"
-                    width={32}
-                    height={32}
-                    className="rounded-full border-2 border-white"
-                  />
+                  {session.user?.image ? (
+                    <Image
+                      src={session.user.image}
+                      alt="Profile picture"
+                      width={32}
+                      height={32}
+                      className="rounded-full border-2 border-white"
+                    />
+                  ) : (
+                    <DefaultAvatar />
+                  )}
                   <span className="text-sm font-medium">
                     {session.user?.name || session.user?.email}
                   </span>
@@ -161,25 +155,21 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-blue-200 hover:bg-blue-800 transition-colors"
-                  onClick={() => {
-                    signIn('github');
-                    toggleMenu();
-                  }}
-                >
-                  Sign in
-                </Button>
-                <Button
-                  className="bg-white text-blue-600 hover:bg-blue-100 transition-colors"
-                  onClick={() => {
-                    signIn('github');
-                    toggleMenu();
-                  }}
-                >
-                  Sign up
-                </Button>
+                <Link href="/sign-in" onClick={toggleMenu}>
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:text-blue-200 hover:bg-blue-800 transition-colors w-full"
+                  >
+                    Sign in
+                  </Button>
+                </Link>
+                <Link href="/sign-up" onClick={toggleMenu}>
+                  <Button
+                    className="bg-white text-blue-600 hover:bg-blue-100 transition-colors w-full"
+                  >
+                    Sign up
+                  </Button>
+                </Link>
               </>
             )}
           </nav>

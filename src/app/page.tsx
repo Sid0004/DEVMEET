@@ -1,59 +1,52 @@
-import './globals.css';
-import React from "react";
-import { Users, Brain, Calendar, Rocket } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import LandingPage from '@/components/landinPage';
+import LandingPage from "@/components/landinPage";
+import { Code2, MessageSquare, Rocket, Users } from "lucide-react";
+
 const features = [
   {
-    icon: <Users className="w-8 h-8 text-primary mb-4" />,
-    title: "Real-Time Collaboration",
-    description: "Code live with peers, share sessions, and build in sync.",
+    icon: <Code2 className="h-6 w-6" />,
+    title: "Real-time Collaboration",
+    description: "Code together in real-time with built-in chat and video calls."
   },
   {
-    icon: <Brain className="w-8 h-8 text-primary mb-4" />,
-    title: "AI Assistant",
-    description: "Get instant code suggestions, fixes, and optimizations.",
+    icon: <MessageSquare className="h-6 w-6" />,
+    title: "AI Assistance",
+    description: "Get help from AI-powered coding assistants and code review tools."
   },
   {
-    icon: <Calendar className="w-8 h-8 text-primary mb-4" />,
+    icon: <Users className="h-6 w-6" />,
     title: "Dev Events",
-    description: "Join coding jams, hackathons, and community meetups.",
+    description: "Join virtual hackathons, workshops, and networking events."
   },
   {
-    icon: <Rocket className="w-8 h-8 text-primary mb-4" />,
-    title: "Ship Fast",
-    description: "Build, test, and deploy from your Dev Room itself.",
-  },
+    icon: <Rocket className="h-6 w-6" />,
+    title: "Fast Shipping",
+    description: "Deploy your projects quickly with our integrated deployment tools."
+  }
 ];
 
-const Page = () => {
+export default function Page() {
   return (
-    <div className='min-h-screen'>
-      <LandingPage/>
-
-      <section>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w mx-auto">
+    <main className="min-h-screen bg-white">
+      <LandingPage />
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            Everything you need to build amazing projects
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card
+              <div
                 key={index}
-                className="border-2 hover:border-primary transition-colors duration-300"
+                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <CardContent className="pt-6 text-center flex flex-col items-center">
-                  <div className="flex flex-col items-center justify-center">
-                    {feature.icon}
-                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="text-blue-600 mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </div>
             ))}
           </div>
+        </div>
       </section>
-    </div>
+    </main>
   );
-};
-
-export default Page;
+}
