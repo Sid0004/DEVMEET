@@ -7,12 +7,46 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { CopyIcon } from 'lucide-react';
+import { 
+  CopyIcon, 
+  Users, 
+  Code2, 
+  Lock, 
+  Globe, 
+  Loader2,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  Video,
+  MessageSquare,
+  UserPlus,
+  Settings
+} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { motion } from 'framer-motion';
+
+type RoomType = 'public' | 'private';
+type RoomSettings = {
+  isPrivate: boolean;
+  maxParticipants: number;
+  allowChat: boolean;
+  allowVideo: boolean;
+};
 
 const CreateRoomPage = () => {
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
+  const [roomType, setRoomType] = useState<RoomType>('public');
+  const [settings, setSettings] = useState<RoomSettings>({
+    isPrivate: false,
+    maxParticipants: 4,
+    allowChat: true,
+    allowVideo: true,
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,93 +55,291 @@ const CreateRoomPage = () => {
 
   const handleCreateRoom = async () => {
     if (!username.trim()) {
-      toast.error('Enter a username');
+      toast.error('Please enter your name');
       return;
     }
 
-    const res = await fetch('/api/room/create', {
-      method: 'POST',
-      body: JSON.stringify({ roomId }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/room/create', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          roomId,
+          settings,
+          type: roomType
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    const data = await res.json();
-    if (!res.ok) return toast.error(data.message || 'Room creation failed');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Room creation failed');
 
-    router.push(`/room/${roomId}?username=${encodeURIComponent(username)}`);
+      toast.success('Room created successfully!');
+      router.push(`/room/${roomId}?username=${encodeURIComponent(username)}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create room');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleJoinRoom = async () => {
     if (!username.trim() || !joinRoomId.trim()) {
-      toast.error('Fill both fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
-    const res = await fetch('/api/room/join', {
-      method: 'POST',
-      body: JSON.stringify({ roomId: joinRoomId }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/room/join', {
+        method: 'POST',
+        body: JSON.stringify({ roomId: joinRoomId }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    const data = await res.json();
-    if (!res.ok) return toast.error(data.message || 'Room not found');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Room not found');
 
-    router.push(`/room/${joinRoomId}?username=${encodeURIComponent(username)}`);
+      toast.success('Joining room...');
+      router.push(`/room/${joinRoomId}?username=${encodeURIComponent(username)}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to join room');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(roomId);
-    toast.success('Room ID copied!');
+    toast.success('Room ID copied to clipboard!');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4 py-12">
-      <div className="w-full max-w-lg p-6 bg-gray-900 rounded-xl border border-gray-700 shadow-xl">
-        <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="w-full flex justify-center gap-4 bg-gray-800">
-            <TabsTrigger value="create" className="w-1/2">Create</TabsTrigger>
-            <TabsTrigger value="join" className="w-1/2">Join</TabsTrigger>
-          </TabsList>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 px-4 py-12">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-2xl"
+      >
+        <Card className="bg-gray-900/40 backdrop-blur-xl border-gray-800/50 shadow-2xl">
+          <CardHeader className="space-y-1 pb-8">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex items-center justify-center mb-4"
+            >
+              <Sparkles className="w-8 h-8 text-blue-500 mr-2" />
+              <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                DevMeet Room
+              </CardTitle>
+            </motion.div>
+            <CardDescription className="text-center text-gray-400 text-lg">
+              Start coding together in real-time
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="create" className="space-y-8">
+              <TabsList className="w-full grid grid-cols-2 bg-gray-800/30 p-1 rounded-xl">
+                <TabsTrigger 
+                  value="create" 
+                  className="data-[state=active]:bg-blue-600/80 data-[state=active]:text-white rounded-lg transition-all duration-200"
+                >
+                  <Code2 className="w-4 h-4 mr-2" />
+                  Create Room
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="join" 
+                  className="data-[state=active]:bg-green-600/80 data-[state=active]:text-white rounded-lg transition-all duration-200"
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Join Room
+                </TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="create" className="space-y-4 mt-6">
-            <Input
-              placeholder="Your Name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-800 text-white"
-            />
-            <div className="flex gap-2">
-              <Input value={roomId} readOnly className="bg-gray-800 text-white" />
-              <Button onClick={handleCopy}><CopyIcon className="w-4 h-4" /></Button>
-            </div>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleCreateRoom}>
-              Create Room
-            </Button>
-          </TabsContent>
+              <TabsContent value="create" className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-gray-300 text-sm font-medium">Your Name</Label>
+                    <Input
+                      id="username"
+                      placeholder="Enter your name"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 text-white h-12"
+                    />
+                  </div>
 
-          <TabsContent value="join" className="space-y-4 mt-6">
-            <Input
-              placeholder="Your Name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-800 text-white"
-            />
-            <Input
-              placeholder="Enter Room ID"
-              value={joinRoomId}
-              onChange={(e) => setJoinRoomId(e.target.value)}
-              className="bg-gray-800 text-white"
-            />
-            <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handleJoinRoom}>
-              Join Room
-            </Button>
-          </TabsContent>
-        </Tabs>
-      </div>
+                  <div className="space-y-2">
+                    <Label className="text-gray-300 text-sm font-medium">Room Type</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Button
+                        type="button"
+                        variant={roomType === 'public' ? 'default' : 'outline'}
+                        className={`w-full h-12 ${roomType === 'public' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
+                        onClick={() => setRoomType('public')}
+                      >
+                        <Globe className="w-4 h-4 mr-2" />
+                        Public
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={roomType === 'private' ? 'default' : 'outline'}
+                        className={`w-full h-12 ${roomType === 'private' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
+                        onClick={() => setRoomType('private')}
+                      >
+                        <Lock className="w-4 h-4 mr-2" />
+                        Private
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-gray-400" />
+                      <Label className="text-gray-300 text-sm font-medium">Room Settings</Label>
+                    </div>
+                    <div className="space-y-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <UserPlus className="w-4 h-4 text-gray-400" />
+                          <Label htmlFor="maxParticipants" className="text-gray-300">Max Participants</Label>
+                        </div>
+                        <Input
+                          id="maxParticipants"
+                          type="number"
+                          min="2"
+                          max="10"
+                          value={settings.maxParticipants}
+                          onChange={(e) => setSettings({ ...settings, maxParticipants: parseInt(e.target.value) })}
+                          className="w-20 bg-gray-800/50 border-gray-700 text-white"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4 text-gray-400" />
+                          <Label htmlFor="allowChat" className="text-gray-300">Enable Chat</Label>
+                        </div>
+                        <Switch
+                          id="allowChat"
+                          checked={settings.allowChat}
+                          onCheckedChange={(checked: boolean) => setSettings({ ...settings, allowChat: checked })}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Video className="w-4 h-4 text-gray-400" />
+                          <Label htmlFor="allowVideo" className="text-gray-300">Enable Video</Label>
+                        </div>
+                        <Switch
+                          id="allowVideo"
+                          checked={settings.allowVideo}
+                          onCheckedChange={(checked: boolean) => setSettings({ ...settings, allowVideo: checked })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-300 text-sm font-medium">Room ID</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={roomId}
+                        readOnly
+                        className="bg-gray-800/50 border-gray-700 text-white font-mono h-12"
+                      />
+                      <Button
+                        onClick={handleCopy}
+                        variant="outline"
+                        className="bg-gray-800/50 border-gray-700 h-12 hover:bg-gray-800"
+                      >
+                        <CopyIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 h-12 text-lg font-medium"
+                    onClick={handleCreateRoom}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Creating Room...
+                      </>
+                    ) : (
+                      <>
+                        Create Room
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="join" className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="joinUsername" className="text-gray-300 text-sm font-medium">Your Name</Label>
+                    <Input
+                      id="joinUsername"
+                      placeholder="Enter your name"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 text-white h-12"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="roomId" className="text-gray-300 text-sm font-medium">Room ID</Label>
+                    <Input
+                      id="roomId"
+                      placeholder="Enter the room ID"
+                      value={joinRoomId}
+                      onChange={(e) => setJoinRoomId(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 text-white font-mono h-12"
+                    />
+                  </div>
+
+                  <Button
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 h-12 text-lg font-medium"
+                    onClick={handleJoinRoom}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Joining Room...
+                      </>
+                    ) : (
+                      <>
+                        Join Room
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };

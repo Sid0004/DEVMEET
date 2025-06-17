@@ -1,5 +1,5 @@
 "use client";
-import LandingPage from "@/components/landinPage";
+import LandingPage from "@/components/landingPage";
 import { features } from "@/data/features";
 import { motion } from "framer-motion";
 
