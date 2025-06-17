@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, User, Code2, Users, Calendar, Rocket } from 'lucide-react';
 import Image from 'next/image';
 
@@ -11,6 +11,29 @@ const Header = () => {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlHeader = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > lastScrollY) { // if scroll down
+        setIsVisible(false);
+      } else { // if scroll up
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', controlHeader);
+
+    // cleanup function
+    return () => {
+      window.removeEventListener('scroll', controlHeader);
+    };
+  }, [lastScrollY]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
@@ -22,7 +45,7 @@ const Header = () => {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px]">
+    <header className={`fixed top-0 left-0 right-0 z-[100]  mb-[40px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] backdrop-blur-sm transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-2xl font-extrabold tracking-tight">
@@ -37,7 +60,7 @@ const Header = () => {
           <Link href="/community" className="text-sm hover:text-blue-200 transition-colors">
             Community
           </Link>
-          <Link href="/events" className="text-sm hover:text-blue-200 transition-colors">
+          <Link href="/dashboard" className="text-sm hover:text-blue-200 transition-colors">
             Dashboard
           </Link>
         </nav>
@@ -68,13 +91,27 @@ const Header = () => {
                 <ChevronDown size={16} className="hidden md:inline" />
               </button>
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg py-2 z-50">
-                  <div className="px-4 py-2 text-sm border-b">
-                    <p className="font-medium">{session.user?.name}</p>
+                <div className="absolute right-0 mt-2 w-64 bg-white text-gray-800 rounded-xl shadow-2xl py-4 z-50 border border-gray-100 animate-fade-in">
+                  <div className="flex flex-col items-center px-6 pb-4">
+                    {session.user?.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt="Profile picture"
+                        width={48}
+                        height={48}
+                        className="rounded-full border-2 border-blue-600 mb-2"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-600 mb-2">
+                        <User className="w-7 h-7 text-blue-600" />
+                      </div>
+                    )}
+                    <p className="font-semibold text-base text-gray-900">{session.user?.name}</p>
                     <p className="text-xs text-gray-500">{session.user?.email}</p>
                   </div>
+                  <div className="border-t border-gray-200 my-2" />
                   <button
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                    className="w-full text-left px-6 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors rounded-b-xl"
                     onClick={() => {
                       signOut();
                       setIsUserMenuOpen(false);

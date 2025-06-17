@@ -8,13 +8,11 @@ const dbConnect = async () => {
 
   try {
     const db = await mongoose.connect(process.env.MONGO_URI!, {
-      dbName: "devmeet", // you can change this to your DB name
+      dbName: "devmeet", 
     });
 
     isConnected = !!db.connections[0].readyState;
-    console.log("✅ MongoDB connected");
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
     throw error;
   }
 };

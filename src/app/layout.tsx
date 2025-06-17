@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AuthProvider from "@/context/AuthProvider";
-
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +37,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header />
+            <div className="h-[75px]" />
+            <Toaster position="top-right" richColors />
             <main className="min-h-screen">{children}</main>
             <Footer />
           </ThemeProvider>
