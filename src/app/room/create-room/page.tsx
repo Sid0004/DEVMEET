@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -36,6 +37,7 @@ type RoomSettings = {
 };
 
 const CreateRoomPage = () => {
+  const { data: session, status } = useSession();
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
@@ -52,6 +54,33 @@ const CreateRoomPage = () => {
   useEffect(() => {
     setRoomId(nanoid(10));
   }, []);
+
+  // Set username from session if available
+  useEffect(() => {
+    if (session?.user?.username) {
+      setUsername(session.user.username);
+    } else if (session?.user?.name) {
+      setUsername(session.user.name);
+    }
+  }, [session]);
+
+  // Show loading while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+        <div className="text-white text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to sign-in if not authenticated
+  if (status === 'unauthenticated') {
+    router.push('/sign-in');
+    return null;
+  }
 
   const handleCreateRoom = async () => {
     if (!username.trim()) {

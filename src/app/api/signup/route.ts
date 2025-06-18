@@ -21,6 +21,41 @@ const signupSchema = z.object({
     )
 });
 
+// Function to generate unique username
+async function generateUniqueUsername(baseName: string): Promise<string> {
+  // Clean the base name to create a valid username
+  let username = baseName
+    .toLowerCase()
+    .replace(/\s+/g, '') // Remove spaces
+    .replace(/[^a-z0-9]/g, '') // Remove special characters
+    .substring(0, 20); // Limit length
+
+  // Ensure minimum length
+  if (username.length < 3) {
+    username = username + 'user';
+  }
+
+  let counter = 1;
+  let finalUsername = username;
+
+  while (true) {
+    const existingUser = await User.findOne({ username: finalUsername });
+    if (!existingUser) {
+      break;
+    }
+    finalUsername = `${username}${counter}`;
+    counter++;
+    
+    // Prevent infinite loop
+    if (counter > 100) {
+      finalUsername = `${username}${Date.now()}`;
+      break;
+    }
+  }
+
+  return finalUsername;
+}
+
 export async function POST(req: Request) {
   try {
     // Validate request body
@@ -29,20 +64,21 @@ export async function POST(req: Request) {
 
     await dbConnect();
 
-    // Check for existing user
-    const existingUser = await User.findOne({ 
-      $or: [
-        { email: validatedData.email.toLowerCase() },
-        { username: validatedData.name.toLowerCase() }
-      ]
+    // Check for existing user by email
+    const existingUserByEmail = await User.findOne({ 
+      email: validatedData.email.toLowerCase() 
     });
 
-    if (existingUser) {
+    if (existingUserByEmail) {
       return NextResponse.json(
-        { error: "Email or username already registered" }, 
+        { error: "Email already registered" }, 
         { status: 409 }
       );
     }
+
+    // Generate unique username
+    const username = await generateUniqueUsername(validatedData.name);
+    console.log("Generated username:", username);
 
     // Hash password with increased salt rounds
     const hashedPassword = await bcrypt.hash(validatedData.password, 12);
@@ -52,14 +88,26 @@ export async function POST(req: Request) {
       name: validatedData.name.trim(),
       email: validatedData.email.toLowerCase().trim(),
       password: hashedPassword,
-      username: validatedData.name.toLowerCase().replace(/\s+/g, ''),
+      username: username,
+      isVerified: true, // Set to true since we don't have email verification
+      isAcceptingMessages: true,
+    });
+
+    console.log("User created successfully:", {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      username: newUser.username
     });
 
     // Remove password from response
     const { password, ...userWithoutPassword } = newUser.toObject();
 
     return NextResponse.json(
-      { message: "User created", user: userWithoutPassword }, 
+      { 
+        message: "User created successfully", 
+        user: userWithoutPassword 
+      }, 
       { status: 201 }
     );
   } catch (error) {
@@ -72,7 +120,7 @@ export async function POST(req: Request) {
 
     console.error("Sign Up Error:", error);
     return NextResponse.json(
-      { error: "Something went wrong" }, 
+      { error: "Something went wrong during signup" }, 
       { status: 500 }
     );
   }

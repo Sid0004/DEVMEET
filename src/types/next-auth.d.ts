@@ -5,24 +5,32 @@ declare module 'next-auth'{
     _id?:string;
     isVerified?:boolean;
     isAcceptingMessages?:boolean;
-    username?:string
+    username?:string;
+    avatar?:string;
+    bio?:string;
+    lastActive?:Date;
    } 
    interface Session{
     user:{
         _id?:string;
-         isVerified?:boolean;
-       isAcceptingMessages?:boolean;
-        username?:string
+        isVerified?:boolean;
+        isAcceptingMessages?:boolean;
+        username?:string;
+        avatar?:string;
+        bio?:string;
+        lastActive?:Date;
         } & DefaultSession['user']
    }
 } 
 
 declare module 'next-auth/jwt'{
     interface JWT{
-          _id?:string;
-         isVerified?:boolean;
-       isAcceptingMessages?:boolean;
-        username?:string
-
+        _id?:string;
+        isVerified?:boolean;
+        isAcceptingMessages?:boolean;
+        username?:string;
+        avatar?:string;
+        bio?:string;
+        lastActive?:Date;
     }
 }

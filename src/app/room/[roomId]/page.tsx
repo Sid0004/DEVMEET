@@ -1,9 +1,30 @@
-import React from 'react'
+// app/room/[roomId]/page.tsx  ←  SERVER component (no "use client")
 
-const roomId = () => {
+import { Room } from "@/components/Room";              // client wrapper
+import { CollaborativeEditor } from "@/components/CollaborativeEditor";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
+
+export default async function RoomPage({
+  params,
+}: {
+  params: Promise<{ roomId: string }>;
+}) {
+  // Check authentication on server side
+  const session = await getServerSession(authOptions);
+  
+  if (!session) {
+    redirect('/sign-in');
+  }
+
+  // Await params in Next.js 15
+  const { roomId } = await params;
+
+  // You can read params synchronously because this file is server‑side
   return (
-    <div>roomId</div>
-  )
+    <Room roomId={roomId}>
+      <CollaborativeEditor />
+    </Room>
+  );
 }
-
-export default roomId

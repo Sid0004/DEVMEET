@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Room from "@/models/Room";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const token = await getToken({ req });
+    
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const { roomId } = await req.json();
 
     if (!roomId) {

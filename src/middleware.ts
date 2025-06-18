@@ -12,7 +12,7 @@ const securityHeaders = {
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
+  'Content-Security-Policy': "default-src 'self'; connect-src 'self' wss://liveblocks.io https://liveblocks.io wss://api.liveblocks.io https://api.liveblocks.io; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
 };
 
 export async function middleware(request: NextRequest) {
@@ -44,13 +44,28 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const url = request.nextUrl;
 
-  // Allow access to home page and public routes
-  if (url.pathname === '/' || url.pathname.startsWith('/_next') || url.pathname.startsWith('/api')) {
+  // Allow access to home page, public routes, and some API routes
+  if (url.pathname === '/' || 
+      url.pathname.startsWith('/_next') || 
+      url.pathname.startsWith('/api/auth') ||
+      url.pathname.startsWith('/api/signup') ||
+      url.pathname.startsWith('/public')) {
     return response;
   }
 
+  // Protect room-related routes and API endpoints
+  if (url.pathname.startsWith('/room') || 
+      url.pathname.startsWith('/api/room') ||
+      url.pathname.startsWith('/api/liveblocks-auth')) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/sign-in', request.url));
+    }
+  }
+
   // If user is not signed in and trying to access protected routes
-  if (!token && !url.pathname.startsWith('/sign-in') && !url.pathname.startsWith('/sign-up')) {
+  if (!token && 
+      !url.pathname.startsWith('/sign-in') && 
+      !url.pathname.startsWith('/sign-up')) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 

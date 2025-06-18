@@ -40,16 +40,28 @@ export const authOptions: NextAuthOptions = {
                         throw new Error("Invalid password");
                     }
 
+                    console.log("User found:", {
+                        id: user._id.toString(),
+                        email: user.email,
+                        name: user.name,
+                        username: user.username,
+                        isVerified: user.isVerified
+                    });
+
                     return {
                         id: user._id.toString(),
                         email: user.email,
                         name: user.name,
                         isVerified: user.isVerified,
                         isAcceptingMessages: user.isAcceptingMessages,
-                        username: user.username
+                        username: user.username,
+                        avatar: user.avatar,
+                        bio: user.bio,
+                        lastActive: user.lastActive
                     };
-                } catch (error: any) {
-                    throw new Error(error.message || "Authentication failed");
+                } catch (error: unknown) {
+                    const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+                    throw new Error(errorMessage);
                 }
             }
         })
@@ -64,10 +76,15 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
+                console.log("JWT callback - user data:", user);
                 token._id = user.id;
                 token.isVerified = user.isVerified;
                 token.isAcceptingMessages = user.isAcceptingMessages;
                 token.username = user.username;
+                token.avatar = user.avatar;
+                token.bio = user.bio;
+                token.lastActive = user.lastActive;
+                console.log("JWT callback - token after update:", token);
             }
             return token;
         },
@@ -77,6 +94,9 @@ export const authOptions: NextAuthOptions = {
                 session.user.isVerified = token.isVerified;
                 session.user.isAcceptingMessages = token.isAcceptingMessages;
                 session.user.username = token.username;
+                session.user.avatar = token.avatar;
+                session.user.bio = token.bio;
+                session.user.lastActive = token.lastActive;
             }
             return session;
         }
