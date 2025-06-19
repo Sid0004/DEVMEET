@@ -27,6 +27,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 type RoomType = 'public' | 'private';
 type RoomSettings = {
@@ -49,6 +50,11 @@ const CreateRoomPage = () => {
     allowVideo: true,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [createdRoomId, setCreatedRoomId] = useState<string | null>(null);
+  const [userRooms, setUserRooms] = useState<any[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState(true);
+  const [showRoomsSheet, setShowRoomsSheet] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -62,6 +68,18 @@ const CreateRoomPage = () => {
     } else if (session?.user?.name) {
       setUsername(session.user.name);
     }
+  }, [session]);
+
+  // Fetch user's previous rooms
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setLoadingRooms(true);
+      const res = await fetch('/api/room/user-rooms');
+      const data = await res.json();
+      setUserRooms((data.rooms || []).filter((r: any) => r.createdBy?._id === session?.user?._id));
+      setLoadingRooms(false);
+    };
+    if (session?.user?._id) fetchRooms();
   }, [session]);
 
   // Show loading while checking authentication
@@ -87,7 +105,6 @@ const CreateRoomPage = () => {
       toast.error('Please enter your name');
       return;
     }
-
     setIsLoading(true);
     try {
       const res = await fetch('/api/room/create', {
@@ -101,12 +118,11 @@ const CreateRoomPage = () => {
           'Content-Type': 'application/json',
         },
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Room creation failed');
-
+      setCreatedRoomId(roomId);
       toast.success('Room created successfully!');
-      router.push(`/room/${roomId}?username=${encodeURIComponent(username)}`);
+      // router.push(`/room/${roomId}?username=${encodeURIComponent(username)}`); // Only redirect on button click
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create room');
     } finally {
@@ -148,13 +164,51 @@ const CreateRoomPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 px-4 py-12 pt-[90px]">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-2xl"
+        className="w-full max-w-2xl relative"
       >
+        <Sheet open={showRoomsSheet} onOpenChange={setShowRoomsSheet}>
+          <SheetTrigger asChild>
+            <Button className="mb-4 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 w-full sm:w-auto font-semibold">
+              Show My Rooms
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="bg-black border-gray-800 w-full max-w-xs z-[120]">
+            <SheetHeader>
+              <SheetTitle className="text-blue-300">My Rooms</SheetTitle>
+            </SheetHeader>
+            {loadingRooms ? (
+              <div className="flex items-center justify-center py-4 text-gray-400">
+                Loading your rooms...
+              </div>
+            ) : (userRooms.length > 0 ? (
+              <div className="flex flex-col gap-3 mt-4">
+                {userRooms.map((room) => (
+                  <div key={room._id} className="flex flex-col gap-1 bg-gray-800/60 rounded-lg px-3 py-2 mb-2">
+                    <span className="font-mono text-blue-200">{room.roomId}</span>
+                    <div className="flex gap-2 mt-1">
+                      <Button size="sm" variant="outline" className="border-gray-700 text-xs px-2 py-1" onClick={() => {navigator.clipboard.writeText(room.roomId)}}>
+                        Copy ID
+                      </Button>
+                      <Button size="sm" className="bg-blue-700 text-white text-xs px-2 py-1" onClick={() => router.push(`/room/${room.roomId}?username=${encodeURIComponent(username)}`)}>
+                        Go to Room
+                      </Button>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {room.createdBy?._id === session?.user?._id ? 'Created by you' : 'Joined'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-400 mt-4">No rooms found.</div>
+            ))}
+          </SheetContent>
+        </Sheet>
         <Card className="bg-gray-900/40 backdrop-blur-xl border-gray-800/50 shadow-2xl">
           <CardHeader className="space-y-1 pb-8">
             <motion.div
@@ -208,37 +262,42 @@ const CreateRoomPage = () => {
                       className="bg-gray-800/50 border-gray-700 text-white h-12"
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-gray-300 text-sm font-medium">Room Type</Label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button
-                        type="button"
-                        variant={roomType === 'public' ? 'default' : 'outline'}
-                        className={`w-full h-12 ${roomType === 'public' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
-                        onClick={() => setRoomType('public')}
-                      >
-                        <Globe className="w-4 h-4 mr-2" />
-                        Public
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={roomType === 'private' ? 'default' : 'outline'}
-                        className={`w-full h-12 ${roomType === 'private' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
-                        onClick={() => setRoomType('private')}
-                      >
-                        <Lock className="w-4 h-4 mr-2" />
-                        Private
-                      </Button>
-                    </div>
+                  <Label className="text-gray-300 text-sm font-medium">Room Type</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      type="button"
+                      variant={roomType === 'public' ? 'default' : 'outline'}
+                      className={`w-full h-12 ${roomType === 'public' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
+                      onClick={() => setRoomType('public')}
+                    >
+                      <Globe className="w-4 h-4 mr-2" />
+                      Public
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={roomType === 'private' ? 'default' : 'outline'}
+                      className={`w-full h-12 ${roomType === 'private' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800/50 hover:bg-gray-800'}`}
+                      onClick={() => setRoomType('private')}
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      Private
+                    </Button>
                   </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Settings className="w-4 h-4 text-gray-400" />
-                      <Label className="text-gray-300 text-sm font-medium">Room Settings</Label>
-                    </div>
-                    <div className="space-y-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/50">
+                  <div className="text-xs text-gray-400 mt-1">
+                    <span className="font-semibold">Public:</span> Anyone with the room link can join.<br/>
+                    <span className="font-semibold">Private:</span> Only invited users can join. (Feature coming soon)
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full mt-4 bg-gray-800/40 border-gray-700 text-gray-200 hover:bg-gray-800"
+                    onClick={() => setShowSettings((v) => !v)}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    {showSettings ? 'Hide Advanced Settings' : 'Show Advanced Settings'}
+                  </Button>
+                  {showSettings && (
+                    <div className="space-y-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/50 mt-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <UserPlus className="w-4 h-4 text-gray-400" />
@@ -251,13 +310,14 @@ const CreateRoomPage = () => {
                           max="10"
                           value={settings.maxParticipants}
                           onChange={(e) => setSettings({ ...settings, maxParticipants: parseInt(e.target.value) })}
-                          className="w-20 bg-gray-800/50 border-gray-700 text-white"
+                          className="w-20 bg-gray-800/50 border-gray-700 text-white text-center"
                         />
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <MessageSquare className="w-4 h-4 text-gray-400" />
                           <Label htmlFor="allowChat" className="text-gray-300">Enable Chat</Label>
+                          <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-500/20 text-yellow-500 font-semibold">Coming soon</span>
                         </div>
                         <Switch
                           id="allowChat"
@@ -269,6 +329,7 @@ const CreateRoomPage = () => {
                         <div className="flex items-center gap-2">
                           <Video className="w-4 h-4 text-gray-400" />
                           <Label htmlFor="allowVideo" className="text-gray-300">Enable Video</Label>
+                          <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-500/20 text-yellow-500 font-semibold">Coming soon</span>
                         </div>
                         <Switch
                           id="allowVideo"
@@ -277,43 +338,51 @@ const CreateRoomPage = () => {
                         />
                       </div>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-gray-300 text-sm font-medium">Room ID</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={roomId}
-                        readOnly
-                        className="bg-gray-800/50 border-gray-700 text-white font-mono h-12"
-                      />
+                  )}
+                  {!createdRoomId && (
+                    <Button
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 h-12 text-lg font-medium"
+                      onClick={handleCreateRoom}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Creating Room...
+                        </>
+                      ) : (
+                        <>
+                          Create Room
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {createdRoomId && (
+                    <div className="flex flex-col items-center gap-4 mt-6">
+                      <div className="text-green-400 font-semibold text-lg">Room created successfully!</div>
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          value={createdRoomId}
+                          readOnly
+                          className="bg-gray-800/50 border-gray-700 text-white font-mono h-12 w-48 text-center"
+                        />
+                        <Button
+                          onClick={handleCopy}
+                          variant="outline"
+                          className="bg-gray-800/50 border-gray-700 h-12 hover:bg-gray-800"
+                        >
+                          <CopyIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
                       <Button
-                        onClick={handleCopy}
-                        variant="outline"
-                        className="bg-gray-800/50 border-gray-700 h-12 hover:bg-gray-800"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 h-12 text-lg font-medium"
+                        onClick={() => router.push(`/room/${createdRoomId}?username=${encodeURIComponent(username)}`)}
                       >
-                        <CopyIcon className="w-4 h-4" />
+                        Go to Room <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </div>
-                  </div>
-
-                  <Button
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 h-12 text-lg font-medium"
-                    onClick={handleCreateRoom}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Creating Room...
-                      </>
-                    ) : (
-                      <>
-                        Create Room
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                      </>
-                    )}
-                  </Button>
+                  )}
                 </motion.div>
               </TabsContent>
 

@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <ThemeProvider
@@ -37,17 +37,14 @@ export default function RootLayout({
             defaultTheme="light"
             enableSystem
             disableTransitionOnChange
-          >
+          >   <Providers>
             <Header />
             <div className="h-[75px]" />
             <Toaster position="top-right" richColors />
-            
-        
-            <Providers>
+         
               <main className="min-h-screen">{children}</main>
             </Providers>
-
-            <Footer />
+           <Footer />
           </ThemeProvider>
         </AuthProvider>
       </body>

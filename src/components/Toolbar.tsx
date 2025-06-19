@@ -1,13 +1,35 @@
 import styles from "./Toolbar.module.css";
 import * as Y from "yjs";
 
+const LANGUAGES = [
+  { label: "JavaScript", value: "javascript" },
+  { label: "Python", value: "python" },
+  { label: "Java", value: "java" },
+  { label: "Markdown", value: "markdown" },
+  { label: "HTML", value: "html" },
+  { label: "CSS", value: "css" },
+  { label: "SQL", value: "sql" },
+];
+
 type Props = {
   yUndoManager: Y.UndoManager;
+  language: string;
+  onLanguageChange: (lang: string) => void;
 };
 
-export function Toolbar({ yUndoManager }: Props) {
+export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
   return (
     <div className={styles.toolbar}>
+      <select
+        className={styles.languageSelect}
+        value={language}
+        onChange={e => onLanguageChange(e.target.value)}
+        aria-label="Select language"
+      >
+        {LANGUAGES.map(lang => (
+          <option key={lang.value} value={lang.value}>{lang.label}</option>
+        ))}
+      </select>
       <button
         className={styles.button}
         onClick={() => yUndoManager.undo()}

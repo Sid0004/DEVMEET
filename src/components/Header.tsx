@@ -53,9 +53,9 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href="/features" className="text-sm hover:text-blue-200 transition-colors">
-            Features
+        <nav className="hidden md:flex items-right gap-6">
+          <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors">
+            create-room
           </Link>
           <Link href="/community" className="text-sm hover:text-blue-200 transition-colors">
             Community
@@ -151,9 +151,9 @@ const Header = () => {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden bg-blue-700 py-4">
-          <nav className="flex flex-col items-center gap-4">
-            <Link href="/features" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
-              Features
+          <nav className="flex r gap-4">
+            <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+             create-room
             </Link>
             <Link href="/community" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Community

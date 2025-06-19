@@ -26,6 +26,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Room not found" }, { status: 404 });
     }
 
+    // Add user to participants if not already present
+    if (!existingRoom.participants.includes(token._id)) {
+      existingRoom.participants.push(token._id);
+      await existingRoom.save();
+    }
+
     return NextResponse.json({ message: "Joined room", room: existingRoom }, { status: 200 });
   } catch (error) {
     console.error("Join Room Error:", error);

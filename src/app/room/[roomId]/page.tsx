@@ -5,6 +5,7 @@ import { CollaborativeEditor } from "@/components/CollaborativeEditor";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
+import RoomHeader from "@/components/RoomHeader";
 
 export default async function RoomPage({
   params,
@@ -24,7 +25,12 @@ export default async function RoomPage({
   // You can read params synchronously because this file is server‑side
   return (
     <Room roomId={roomId}>
-      <CollaborativeEditor />
+      <div className="flex flex-col gap-6 w-full h-full">
+        <RoomHeader roomId={roomId} />
+        <div className="flex-1 min-h-0">
+          <CollaborativeEditor />
+        </div>
+      </div>
     </Room>
   );
 }

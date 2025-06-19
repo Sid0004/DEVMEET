@@ -2,21 +2,142 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  border-radius: 12px;
-  background: #fff;
+  border-radius: 16px;
+  background: #f3f4f6;
   width: 100%;
-  height: 100%;
+  min-height: 500px;
+  height: 70vh;
   color: #111827;
   overflow: hidden;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+  padding: 0;
 }
 
 .editorHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  background: transparent;
+}
+
+.mainSplit {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+.leftPane {
+  width: 50%;
+  min-width: 320px;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  box-sizing: border-box;
+  border-right: 1.5px solid #e5e7eb;
+}
+.dark .leftPane {
+  border-right: 1.5px solid #23272f;
+}
+.rightPane {
+  flex: 1 1 0%;
+  height: 100%;
+  background: transparent;
+}
+@media (max-width: 900px) {
+  .mainSplit {
+    flex-direction: column;
+  }
+  .leftPane, .rightPane {
+    width: 100%;
+    border-right: none;
+    padding: 0.5rem;
+  }
+}
+
+.splitContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  gap: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.codePane {
+  flex: 1 1 100%;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+.dark .codePane {
+  background: #18181b;
+  border: 1px solid #27272a;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.24);
+}
+
+.resizableHandle {
+  height: 10px;
+  background: linear-gradient(90deg, #e5e7eb 40%, #cbd5e1 60%);
+  cursor: row-resize;
+  border: none;
+  outline: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dark .resizableHandle {
+  background: linear-gradient(90deg, #27272a 40%, #3f3f46 60%);
+}
+.resizableHandle:hover {
+  background: linear-gradient(90deg, #cbd5e1 40%, #a0aec0 60%);
+}
+.dark .resizableHandle:hover {
+  background: linear-gradient(90deg, #3f3f46 40%, #52525b 60%);
+}
+
+.outputPane {
+  background: #f9fafb;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.dark .outputPane {
+  background: #23272f;
+  border: 1px solid #27272a;
+  color: #e5e7eb;
+}
+
+@media (max-width: 900px) {
+  .codePane, .outputPane {
+    border-radius: 10px;
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  }
 }
 
 .editorContainer {
   position: relative;
   flex-grow: 1;
+  min-height: 200px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dark .editorContainer {
+  background: #18181b;
 }

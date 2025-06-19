@@ -1,86 +1,161 @@
-import React from 'react';
-import { User, Folder, Calendar, MessageCircle, PlusCircle } from 'lucide-react';
+// 'use client';
 
-const user = {
-  name: 'John Doe',
-  avatar: '', // Add avatar URL if available
-};
+// import React, { useEffect, useState } from 'react';
+// import { useSession } from 'next-auth/react';
+// import {
+//   User, Users, PlusCircle, Loader2, DoorOpen, Eye
+// } from 'lucide-react';
 
-const stats = [
-  { label: 'Projects', value: 8, icon: <Folder className="w-6 h-6 text-blue-600" /> },
-  { label: 'Events', value: 3, icon: <Calendar className="w-6 h-6 text-green-600" /> },
-  { label: 'Messages', value: 12, icon: <MessageCircle className="w-6 h-6 text-purple-600" /> },
-];
+// type Participant = {
+//   _id: string;
+//   name: string;
+//   username?: string;
+//   avatar?: string;
+//   email?: string;
+// };
 
-const recentActivity = [
-  { id: 1, text: 'Joined the "React Hackathon" event.' },
-  { id: 2, text: 'Created a new project: "AI Chatbot".' },
-  { id: 3, text: 'Sent a message to Jane.' },
-];
+// type Room = {
+//   _id: string;
+//   roomId: string;
+//   createdBy: Participant;
+//   participants: Participant[];
+//   createdAt: string;
+// };
 
-const Dashboard = () => {
+// const Dashboard = () => {
+//   const { data: session, status } = useSession();
+//   const [rooms, setRooms] = useState<Room[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchRooms = async () => {
+//       setLoading(true);
+//       const res = await fetch('/api/room/user-rooms');
+//       const data = await res.json();
+//       setRooms(data.rooms || []);
+//       setLoading(false);
+//     };
+//     fetchRooms();
+//   }, []);
+
+//   const user = session?.user || {};
+//   const createdRooms = rooms.filter((room) => room.createdBy?._id === user._id);
+//   const joinedRooms = rooms.filter((room) => room.createdBy?._id !== user._id);
+
+//   if (status === 'loading' || loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+//       </div>
+//     );
+//   }
+
+//   const RoomCard = ({ room, color }: { room: Room; color: 'blue' | 'green' }) => (
+//     <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition">
+//       <div className="flex items-center justify-between">
+//         <span className={`text-sm font-mono text-${color}-600 flex items-center gap-1`}>
+//           <Eye className="w-4 h-4" /> {room.roomId}
+//         </span>
+//         <span className="text-xs text-gray-400">{new Date(room.createdAt).toLocaleDateString()}</span>
+//       </div>
+//       <div className="mt-2 text-xs text-gray-500">
+//         {room.participants.length} participants
+//       </div>
+//       <div className="mt-2 flex items-center gap-2 flex-wrap">
+//         {room.participants.map((p) => (
+//           <img
+//             key={p._id}
+//             src={p.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.name)}
+//             alt={p.name}
+//             className="w-7 h-7 rounded-full border object-cover"
+//             title={p.name}
+//           />
+//         ))}
+//       </div>
+//     </div>
+//   );
+
+//   return (
+//     <div className="px-6 py-8 max-w-6xl mx-auto space-y-10">
+//       {/* User Welcome */}
+//       <div className="flex items-center gap-4">
+//         {user.avatar ? (
+//           <img src={user.avatar} alt="avatar" className="w-14 h-14 rounded-full border-2 border-blue-600 object-cover" />
+//         ) : (
+//           <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-600">
+//             <User className="w-8 h-8 text-blue-600" />
+//           </div>
+//         )}
+//         <div>
+//           <h2 className="text-2xl font-semibold text-gray-800">Welcome, {user.name || user.username}!</h2>
+//           <p className="text-sm text-gray-500">{user.email}</p>
+//         </div>
+//       </div>
+
+//       {/* Stats */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//         <div className="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+//           <div className="bg-blue-100 p-3 rounded-full">
+//             <PlusCircle className="text-blue-600 w-6 h-6" />
+//           </div>
+//           <div>
+//             <div className="text-2xl font-bold text-blue-900">{createdRooms.length}</div>
+//             <div className="text-gray-500 text-sm">Rooms Created</div>
+//           </div>
+//         </div>
+//         <div className="bg-white rounded-xl shadow p-6 flex items-center gap-4">
+//           <div className="bg-green-100 p-3 rounded-full">
+//             <Users className="text-green-600 w-6 h-6" />
+//           </div>
+//           <div>
+//             <div className="text-2xl font-bold text-green-900">{joinedRooms.length}</div>
+//             <div className="text-gray-500 text-sm">Rooms Joined</div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Created Rooms */}
+//       <section>
+//         <h3 className="text-lg font-semibold text-blue-700 mb-4 flex items-center gap-2">
+//           <PlusCircle className="w-5 h-5" /> Rooms You Created
+//         </h3>
+//         {createdRooms.length === 0 ? (
+//           <p className="text-gray-500 italic">You haven't created any rooms yet.</p>
+//         ) : (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//             {createdRooms.map((room) => (
+//               <RoomCard key={room._id} room={room} color="blue" />
+//             ))}
+//           </div>
+//         )}
+//       </section>
+
+//       {/* Joined Rooms */}
+//       <section>
+//         <h3 className="text-lg font-semibold text-green-700 mb-4 flex items-center gap-2">
+//           <DoorOpen className="w-5 h-5" /> Rooms You're In
+//         </h3>
+//         {joinedRooms.length === 0 ? (
+//           <p className="text-gray-500 italic">You're not in any rooms yet.</p>
+//         ) : (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//             {joinedRooms.map((room) => (
+//               <RoomCard key={room._id} room={room} color="green" />
+//             ))}
+//           </div>
+//         )}
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default Dashboard;
+import React from 'react'
+
+const dashboard = () => {
   return (
-    <div className="px-4 sm:px-8 py-8 max-w-7xl mx-auto">
-      {/* Welcome Banner */}
-      <div className="flex items-center gap-4 mb-8">
-        {user.avatar ? (
-          <img src={user.avatar} alt="avatar" className="w-14 h-14 rounded-full border-2 border-blue-600" />
-        ) : (
-          <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-600">
-            <User className="w-8 h-8 text-blue-600" />
-          </div>
-        )}
-        <div>
-          <h2 className="text-2xl font-bold text-blue-800">Welcome back, {user.name}!</h2>
-          <p className="text-gray-500">Here's what's happening today:</p>
-        </div>
-      </div>
+    <div>dashboard</div>
+  )
+}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white rounded-xl shadow p-6 flex items-center gap-4">
-            <div className="bg-blue-50 rounded-full p-3 flex items-center justify-center">
-              {stat.icon}
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-900">{stat.value}</div>
-              <div className="text-gray-500 text-sm">{stat.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-4 mb-10">
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition">
-          <PlusCircle className="w-5 h-5" />
-          New Project
-        </button>
-        <button className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition">
-          <Calendar className="w-5 h-5" />
-          Join Event
-        </button>
-        <button className="flex items-center gap-2 bg-purple-600 text-white px-5 py-2 rounded-lg shadow hover:bg-purple-700 transition">
-          <MessageCircle className="w-5 h-5" />
-          New Message
-        </button>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow p-6">
-        <h3 className="text-lg font-semibold text-blue-800 mb-4">Recent Activity</h3>
-        <ul className="space-y-3">
-          {recentActivity.map((activity) => (
-            <li key={activity.id} className="text-gray-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full inline-block" />
-              {activity.text}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-export default Dashboard;
+export default dashboard

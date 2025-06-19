@@ -36,3 +36,14 @@
     rgba(0, 0, 0, 0.16) 0 2px 3px 0,
     rgba(0, 0, 0, 0.04) 0 0 0 1px;
 }
+
+.languageSelect {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  background: #f9fafb;
+  color: #1e293b;
+  outline: none;
+  margin-right: 0.5rem;
+}

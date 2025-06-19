@@ -5,14 +5,18 @@ export function Avatars() {
   const users = useOthers();
   const currentUser = useSelf();
 
+  // Remove duplicate: only show currentUser if not in users
+  const others = users.filter(
+    (u) => !currentUser || u.info?.name !== currentUser.info?.name
+  );
+
   return (
     <div className={styles.avatars}>
-      {users.map(({ connectionId, info }) => {
+      {others.map(({ connectionId, info }) => {
         return (
           <Avatar key={connectionId} picture={info.picture} name={info.name} />
         );
       })}
-
       {currentUser && (
         <div className="relative ml-8 first:ml-0">
           <Avatar

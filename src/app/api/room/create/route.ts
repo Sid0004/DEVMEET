@@ -26,7 +26,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Room already exists" }, { status: 400 });
     }
 
-    const newRoom = await Room.create({ roomId });
+    const newRoom = await Room.create({
+      roomId,
+      createdBy: token._id,
+      participants: [token._id],
+    });
     return NextResponse.json({ message: "Room created", room: newRoom }, { status: 201 });
   } catch (error) {
     console.error("Create Room Error:", error);
