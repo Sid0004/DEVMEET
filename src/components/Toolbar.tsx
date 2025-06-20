@@ -1,15 +1,10 @@
-import styles from "./Toolbar.module.css";
+import { useEffect, useState } from "react";
 import * as Y from "yjs";
 
-const LANGUAGES = [
-  { label: "JavaScript", value: "javascript" },
-  { label: "Python", value: "python" },
-  { label: "Java", value: "java" },
-  { label: "Markdown", value: "markdown" },
-  { label: "HTML", value: "html" },
-  { label: "CSS", value: "css" },
-  { label: "SQL", value: "sql" },
-];
+type Language = {
+  id: number;
+  name: string;
+};
 
 type Props = {
   yUndoManager: Y.UndoManager;
@@ -18,27 +13,43 @@ type Props = {
 };
 
 export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
+  const [languages, setLanguages] = useState<Language[]>([]);
+
+  useEffect(() => {
+    fetch("/api/languages") // calls your own API
+      .then((res) => res.json())
+      .then((data: Language[]) => setLanguages(data))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
-    <div className={styles.toolbar}>
+    <div className="flex items-center gap-2 p-1 bg-gray-100 border-b border-gray-300">
+      {/* Language Dropdown */}
       <select
-        className={styles.languageSelect}
+        className="text-sm p-1 rounded border border-gray-300"
         value={language}
-        onChange={e => onLanguageChange(e.target.value)}
+        onChange={(e) => onLanguageChange(e.target.value)}
         aria-label="Select language"
       >
-        {LANGUAGES.map(lang => (
-          <option key={lang.value} value={lang.value}>{lang.label}</option>
+        {languages.map((lang) => (
+          <option key={lang.id} value={lang.name}>
+            {lang.name}
+          </option>
         ))}
       </select>
+
+      {/* Undo */}
       <button
-        className={styles.button}
+        className="p-1 hover:bg-gray-200 rounded"
         onClick={() => yUndoManager.undo()}
         aria-label="undo"
       >
         <UndoIcon />
       </button>
+
+      {/* Redo */}
       <button
-        className={styles.button}
+        className="p-1 hover:bg-gray-200 rounded"
         onClick={() => yUndoManager.redo()}
         aria-label="redo"
       >
@@ -48,7 +59,8 @@ export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
   );
 }
 
-export function UndoIcon() {
+// Icon components
+function UndoIcon() {
   return (
     <svg
       width="16"
@@ -58,12 +70,11 @@ export function UndoIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M4 6h6a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3H8.91"
+        d="M4 6h6a3 3 0 0 1 3 3 3 3 0 0 1-3 3H8.91"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
       />
       <path
         d="M5.5 3.5 3 6l2.5 2.5"
@@ -71,13 +82,12 @@ export function UndoIcon() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
       />
     </svg>
   );
 }
 
-export function RedoIcon() {
+function RedoIcon() {
   return (
     <svg
       width="16"
@@ -87,12 +97,11 @@ export function RedoIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M12 6H6a3 3 0 0 0-3 3v0a3 3 0 0 0 3 3h1.09"
+        d="M12 6H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3h1.09"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
       />
       <path
         d="M10.5 3.5 13 6l-2.5 2.5"
@@ -100,7 +109,6 @@ export function RedoIcon() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
       />
     </svg>
   );

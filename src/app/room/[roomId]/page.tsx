@@ -1,6 +1,6 @@
 // app/room/[roomId]/page.tsx  ←  SERVER component (no "use client")
 
-import { Room } from "@/components/Room";              // client wrapper
+import { Room } from "@/components/Room";             
 import { CollaborativeEditor } from "@/components/CollaborativeEditor";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
@@ -27,9 +27,9 @@ export default async function RoomPage({
     <Room roomId={roomId}>
       <div className="flex flex-col gap-6 w-full h-full">
         <RoomHeader roomId={roomId} />
-        <div className="flex-1 min-h-0">
+      
           <CollaborativeEditor />
-        </div>
+        
       </div>
     </Room>
   );

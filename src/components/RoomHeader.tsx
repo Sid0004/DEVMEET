@@ -31,10 +31,10 @@ export default function RoomHeader({ roomId }: { roomId: string }) {
         <Avatars />
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" onClick={handleCopy}>
+        <Button variant="outline" className="w-[90px]"   onClick={handleCopy}>
           {copied ? "Copied!" : "Copy Link"}
         </Button>
-        <Button variant="destructive" onClick={handleLeave}>
+        <Button variant="destructive" className="w-[90px]" onClick={handleLeave}>
           Leave Room
         </Button>
       </div>

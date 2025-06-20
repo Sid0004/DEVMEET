@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "sonner";
-import { Providers } from "@/components/Providers"; // 👈 Liveblocks Provider
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,21 +30,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[75px]`}>
         <AuthProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
             disableTransitionOnChange
-          >   <Providers>
-            <Header />
-            <div className="h-[75px]" />
-            <Toaster position="top-right" richColors />
-         
+          >
+            <Providers>
+              <Header />
+              <Toaster position="top-right" richColors />
               <main className="min-h-screen">{children}</main>
             </Providers>
-           <Footer />
+            <Footer />
           </ThemeProvider>
         </AuthProvider>
       </body>

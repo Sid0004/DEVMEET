@@ -3,37 +3,16 @@
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, User, Code2, Users, Calendar, Rocket } from 'lucide-react';
+import { useState } from 'react';
+import { Menu, X, ChevronDown, User, Sun, Moon } from 'lucide-react';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 const Header = () => {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  useEffect(() => {
-    const controlHeader = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY) { // if scroll down
-        setIsVisible(false);
-      } else { // if scroll up
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', controlHeader);
-
-    // cleanup function
-    return () => {
-      window.removeEventListener('scroll', controlHeader);
-    };
-  }, [lastScrollY]);
+  const { theme, setTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
@@ -44,16 +23,20 @@ const Header = () => {
     </div>
   );
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-[100]  mb-[40px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] backdrop-blur-sm transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-      <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-2xl font-extrabold tracking-tight">
-        &lt;/&gt; DevMeet
+          DevMeet
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-right gap-6">
+        <nav className="hidden md:flex items-center gap-6">
           <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors">
             create-room
           </Link>
@@ -65,8 +48,19 @@ const Header = () => {
           </Link>
         </nav>
 
-        {/* Auth and Profile Section */}
+        {/* Auth, Profile, and Theme Toggle Section */}
         <div className="flex items-center gap-4">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="text-white hover:text-blue-200 hover:bg-blue-700 w-9 h-9"
+          >
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+
           {session ? (
             <div className="relative">
               <button
@@ -125,12 +119,12 @@ const Header = () => {
           ) : (
             <div className="hidden md:flex items-center gap-4">
               <Link href="/sign-in">
-                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors px-8 h-9 w-14 py-2">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors w-20 h-9">
                   Sign in
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 h-9 w-14 transition-colors">
+                <Button className="text-white hover:text-blue-200 hover:bg-blue-700 transition-colors w-20 h-9">
                   Sign up
                 </Button>
               </Link>
@@ -139,7 +133,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-blue-700 transition-colors"
+            className="md:hidden p-2 rounded-md hover:bg-blue-700 transition-colors w-9 h-9"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
@@ -150,15 +144,15 @@ const Header = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-blue-700 py-4">
-          <nav className="flex r gap-4">
+        <div className="md:hidden bg-blue-700 py-4 absolute top-[75px] left-0 right-0 z-50">
+          <nav className="flex flex-col gap-4 px-4">
             <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
-             create-room
+              create-room
             </Link>
             <Link href="/community" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Community
             </Link>
-            <Link href="/events" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+            <Link href="/dashboard" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Dashboard
             </Link>
             {session ? (

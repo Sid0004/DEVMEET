@@ -193,3 +193,6 @@ body {
 html {
   scroll-behavior: smooth;
 }
+html body {
+  padding-top: 75px !important;
+}
