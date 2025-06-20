@@ -7,11 +7,13 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import RoomHeader from "@/components/RoomHeader";
 
+
 export default async function RoomPage({
   params,
 }: {
   params: Promise<{ roomId: string }>;
 }) {
+  
   // Check authentication on server side
   const session = await getServerSession(authOptions);
   
@@ -29,7 +31,7 @@ export default async function RoomPage({
         <RoomHeader roomId={roomId} />
       
           <CollaborativeEditor />
-        
+         
       </div>
     </Room>
   );

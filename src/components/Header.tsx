@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
@@ -50,17 +50,7 @@ const Header = () => {
 
         {/* Auth, Profile, and Theme Toggle Section */}
         <div className="flex items-center gap-4">
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="text-white hover:text-blue-200 hover:bg-blue-700 w-9 h-9"
-          >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-
+        
           {session ? (
             <div className="relative">
               <button
@@ -128,8 +118,22 @@ const Header = () => {
                   Sign up
                 </Button>
               </Link>
+
+              
             </div>
+            
           )}
+            {/* Theme Toggle */}
+            <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="text-white hover:text-blue-200 hover:bg-blue-700 w-9 h-9 px-[10px]"
+          >
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+
 
           {/* Mobile Menu Button */}
           <button
@@ -146,7 +150,7 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-blue-700 py-4 absolute top-[75px] left-0 right-0 z-50">
           <nav className="flex flex-col gap-4 px-4">
-            <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+            <Link href="/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               create-room
             </Link>
             <Link href="/community" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>

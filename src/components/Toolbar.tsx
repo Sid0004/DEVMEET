@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import * as Y from "yjs";
 
@@ -16,7 +18,7 @@ export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
   const [languages, setLanguages] = useState<Language[]>([]);
 
   useEffect(() => {
-    fetch("/api/languages") // calls your own API
+    fetch("/api/languages")
       .then((res) => res.json())
       .then((data: Language[]) => setLanguages(data))
       .catch((err) => console.error(err));
