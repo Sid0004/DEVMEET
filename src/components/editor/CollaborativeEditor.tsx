@@ -10,11 +10,10 @@ import { useCallback, useEffect, useState } from "react";
 import { getYjsProviderForRoom } from "@liveblocks/yjs";
 import { useRoom, useSelf } from "@liveblocks/react/suspense";
 import styles from "./CollaborativeEditor.module.css";
-import { Toolbar } from "@/components/Toolbar";
+import { Toolbar } from "@/components/roomsturuture/Toolbar";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { Button } from "@/components/ui/button";
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import RunButtonWithOutput from "./RunButtonWithOutput";
 
 export function CollaborativeEditor() {
   const room = useRoom();
@@ -25,6 +24,7 @@ export function CollaborativeEditor() {
   const [showOutput, setShowOutput] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [code, setCode] = useState<string>("");
+  const [isExecuting, setIsExecuting] = useState(false);
 
   // Language selection
   const [selectedLanguage, setSelectedLanguage] = useState<string>("javascript");
@@ -39,13 +39,21 @@ export function CollaborativeEditor() {
         const resp = await fetch("/api/languages");
         if (resp.ok) {
           const data = await resp.json();
+          
+          if (data.error) {
+            console.error("Languages API error:", data.error);
+            return;
+          }
+          
           const languageMap = data.reduce((map: Record<string, number>, lang: any) => {
-            // normalize the key to lowercase
-            const key = lang.name.split(" ")[0].toLowerCase();
+            // normalize the key to lowercase and handle special cases
+            const key = lang.name.toLowerCase().replace(/\s+/g, '');
             map[key] = lang.id;
             return map;
           }, {});
           setLanguages(languageMap);
+        } else {
+          console.error("Failed to fetch languages:", resp.statusText);
         }
       } catch (error) {
         console.error("Error fetching languages:", error);
@@ -53,7 +61,13 @@ export function CollaborativeEditor() {
     })();
   }, []);
 
-  const languageId = languages[selectedLanguage]; // default to JS if not loaded
+  // Get language ID from selected language name
+  const getLanguageId = (languageName: string): number => {
+    const normalizedName = languageName.toLowerCase().replace(/\s+/g, '');
+    return languages[normalizedName] || 21; // Default to JavaScript (ID: 21) for Piston
+  };
+
+  const languageId = getLanguageId(selectedLanguage);
 
   const ref = useCallback((node: HTMLElement | null) => {
     if (!node) return;
@@ -95,25 +109,37 @@ export function CollaborativeEditor() {
   }, [element, room, userInfo, provider]);
 
   const handleExecute = async () => {
-    const codeContent = element?.querySelector(".cm-content")?.textContent || "";
+    if (!languageId) {
+      setOutput("Error: No language selected");
+      return;
+    }
+
+    if (isExecuting) return; // Prevent multiple executions
+
+    setIsExecuting(true);
+    setShowOutput(true); // Automatically show output when executing
     setOutput("Running...");
+    
     try {
       const resp = await fetch("/api/execute", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code: codeContent, languageId }),
+        body: JSON.stringify({ code: code, languageId, stdin: inputValue }),
       });
 
       const data = await resp.json();
+      
       if (data.error) {
         setOutput(`Error: ${data.error}${data.details ? `\n${data.details}` : ""}`);
       } else {
         setOutput(data.output || "No output");
       }
-    } catch (err) {
-      setOutput(`Error: ${err}`);
+    } catch (error: any) {
+      setOutput(`Error: ${error.message || "Failed to execute code"}`);
+    } finally {
+      setIsExecuting(false);
     }
   };
 
@@ -150,7 +176,13 @@ export function CollaborativeEditor() {
                     <Button size="sm" onClick={() => setShowOutput((prev) => !prev)}>
                       Toggle {showOutput ? "Input" : "Output"}
                     </Button>
-                    <Button size="sm" onClick={handleExecute}>Run Code</Button>
+                    <button
+                      onClick={handleExecute}
+                      disabled={isExecuting || !languageId}
+                      className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm w-[70px]"
+                    >
+                      {isExecuting ? "Running..." : "Run"}
+                    </button>
                   </div>
                 </div>
 
@@ -172,9 +204,6 @@ export function CollaborativeEditor() {
           </div>
         </div>
       </div>
-
-      {/* RunButtonWithOutput with dynamic languageId */}
-      <RunButtonWithOutput getCode={() => code} languageId={languageId} />
     </div>
   );
 }

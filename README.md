@@ -2,9 +2,50 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Features
+
+- Real-time collaborative code editing
+- Built-in code execution with multiple language support (using Piston API)
+- Live video and chat capabilities
+- User authentication and room management
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+# NextAuth Configuration
+NEXTAUTH_SECRET=your_nextauth_secret_here
+NEXTAUTH_URL=http://localhost:3000
+
+# Database Configuration (if using MongoDB)
+MONGODB_URI=your_mongodb_connection_string_here
+
+# Liveblocks Configuration
+LIVEBLOCKS_SECRET_KEY=your_liveblocks_secret_key_here
+```
+
+### Code Execution
+
+This project uses the **Piston API** for code execution, which is:
+- **Free to use** with generous limits
+- **No API key required**
+- Supports 30+ programming languages
+- Fast and reliable execution
+
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -18,9 +59,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/api/languages` - Returns supported programming languages for Piston API
+- `/api/execute` - Executes code using Piston API
+- `/api/auth/[...nextauth]` - NextAuth authentication routes
+- `/api/room/*` - Room management endpoints
+
+## Supported Languages
+
+The code execution feature supports the following languages:
+- JavaScript (Node.js)
+- Python (2.7 & 3.8)
+- Java
+- C/C++
+- C#
+- Go
+- Rust
+- PHP
+- Ruby
+- TypeScript
+- And many more...
 
 ## Learn More
 

@@ -8,11 +8,19 @@ const ipRequestCounts = new Map<string, { count: number; timestamp: number }>();
 
 // Security headers
 const securityHeaders = {
-  'X-Frame-Options': 'DENY',
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  'Content-Security-Policy': "default-src 'self'; connect-src 'self' wss://liveblocks.io https://liveblocks.io wss://api.liveblocks.io https://api.liveblocks.io; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
+  'Content-Security-Policy': 
+  "default-src 'self'; " +
+  "connect-src 'self' " +
+    "wss://liveblocks.io https://liveblocks.io " +
+    "wss://api.liveblocks.io https://api.liveblocks.io " +
+    "https://hint.stream-io-video.com " +
+    "wss://video-stream.getstream.io https://video-stream.getstream.io " +
+    "wss://video.stream-io-api.com https://video.stream-io-api.com; " +
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
+  "style-src 'self' 'unsafe-inline'; " +
+  "img-src 'self' data: https:; " +
+  "font-src 'self' data:;"
+
 };
 
 export async function middleware(request: NextRequest) {

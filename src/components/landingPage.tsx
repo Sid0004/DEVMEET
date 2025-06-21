@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Globe } from "@/components/magicui/globe";
 import { Marquee } from "@/components/magicui/marquee";
+import CardStack from "./CardStack";
 
 const LandingPage = () => {
   return (
@@ -16,7 +17,9 @@ const LandingPage = () => {
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-400 max-w-3xl mb-10">
-            Spin up real-time collaborative coding environments with built-in video, chat, and code execution — perfect for interviews, pair programming, and team debugging.
+            Spin up real-time collaborative coding environments with built-in
+            video, chat, and code execution — perfect for interviews, pair
+            programming, and team debugging.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 sm:items-center">
@@ -29,34 +32,39 @@ const LandingPage = () => {
               </Button>
             </Link>
             <Link href="room/create-room">
-              <Button
-                className="w-40 text-white hover:bg-blue-700 hover:text-white bg-transparent  transition duration-300"
-              >
+              <Button className="w-40 text-white hover:bg-blue-700 hover:text-white bg-transparent  transition duration-300">
                 Try for free
               </Button>
             </Link>
           </div>
-       
-          {/* Marquee */}
-          {/* <div className="absolute bottom-0 left-0 w-full z-20 overflow-hidden bg-gray-950">
-            <div className="relative flex w-full items-center justify-center">
-              <Marquee pauseOnHover className="[--duration:20s]">
-                <div className="text-4xl sm:text-3xl font-semibold text-blue-800">
-                  {Array(20).fill("CONNECT • CODE • CREATE • ").join("")}
-                </div>
-              </Marquee> */}
-
-              {/* Left gradient shadow */}
-              {/* <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-gray-950 to-transparent"></div> */}
-
-              {/* Right gradient shadow */}
-              {/* <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-gray-950 to-transparent"></div>
-            </div>
-         
-        </div> */} </div>
+        </div>
         {/* Globe */}
         <div className="absolute bottom-[-200px] right-[-200px] z-0 flex items-center justify-center w-[659px] h-[659px] opacity-40">
           <Globe />
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="w-full bg-gray-950 text-white py-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4">
+          <div className="text-content">
+            <h2 className="text-4xl font-extrabold mb-6">
+              Explore the DevMeet Toolbox
+            </h2>
+            <p className="text-gray-400 mb-4">
+              Our platform is more than just a code editor. It's a fully-featured
+              collaborative environment designed to streamline the development
+              process.
+            </p>
+            <p className="text-gray-400">
+              Hover over the cards to see how each layer contributes to a
+              seamless and powerful coding experience. From live communication
+              tools to robust code execution, we've got you covered.
+            </p>
+          </div>
+          <div className="card-stack-wrapper flex items-center justify-center">
+            <CardStack />
+          </div>
         </div>
       </section>
     </>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Avatars } from "@/components/Avatars";
+import { Avatars } from "@/components/editor/Avatars";
 import { useState } from "react";
 
 export default function RoomHeader({ roomId }: { roomId: string }) {

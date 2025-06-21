@@ -31,14 +31,16 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-[100] bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold tracking-tight">
-          DevMeet
-        </Link>
+        <div className="flex-shrink-0">
+          <Link href="/" className="text-2xl font-extrabold tracking-tight">
+            DevMeet
+          </Link>
+        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href="room/create-room" className="text-sm hover:text-blue-200 transition-colors">
-            create-room
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+          <Link href="/room/create-room" className="text-sm hover:text-blue-200 transition-colors">
+            Create Room
           </Link>
           <Link href="/community" className="text-sm hover:text-blue-200 transition-colors">
             Community
@@ -49,8 +51,7 @@ const Header = () => {
         </nav>
 
         {/* Auth, Profile, and Theme Toggle Section */}
-        <div className="flex items-center gap-4">
-        
+        <div className="flex items-center gap-4 flex-shrink-0">
           {session ? (
             <div className="relative">
               <button
@@ -118,13 +119,11 @@ const Header = () => {
                   Sign up
                 </Button>
               </Link>
-
-              
             </div>
-            
           )}
-            {/* Theme Toggle */}
-            <Button
+          
+          {/* Theme Toggle */}
+          <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
@@ -133,7 +132,6 @@ const Header = () => {
           >
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
-
 
           {/* Mobile Menu Button */}
           <button
@@ -150,8 +148,8 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-blue-700 py-4 absolute top-[75px] left-0 right-0 z-50">
           <nav className="flex flex-col gap-4 px-4">
-            <Link href="/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
-              create-room
+            <Link href="/room/create-room" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+              Create Room
             </Link>
             <Link href="/community" className="text-sm hover:text-blue-200 transition-colors" onClick={toggleMenu}>
               Community
