@@ -6,7 +6,7 @@ import {
   StreamVideoClient,
   StreamCall,
   StreamTheme,
-  SpeakerLayout,
+  PaginatedGridLayout,
   CallControls,
   User,
   CallingState,
@@ -38,6 +38,23 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Initialize client
+  useEffect(() => {
+    if (!API_KEY || !user || !token) return;
+    const client = new StreamVideoClient({
+      apiKey: API_KEY,
+      user,
+      token,
+    });
+    setClient(client);
+
+    return () => {
+      client.disconnectUser();
+      setClient(null);
+    };
+  }, [API_KEY, user, token]);
 
   // Fetch a real token from the backend
   useEffect(() => {
@@ -57,44 +74,67 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
         setError(e.message || "Failed to get token");
       }
     }
-    fetchToken();
+    if (user.id) {
+        fetchToken();
+    }
   }, [user.id]);
 
-  useEffect(() => {
-    if (!API_KEY || !user || !token) return;
-    const c = new StreamVideoClient({
-      apiKey: API_KEY,
-      user,
-      token,
-    });
-    setClient(c);
-    const callInstance = c.call("default", roomId);
-    callInstance
-      .join({ create: true })
-      .then(() => setCall(callInstance))
-      .catch((e: any) => setError(e.message || "Failed to join call"));
-    return () => {
-      c.disconnectUser();
-    };
-  }, [API_KEY, user, token, roomId]);
+  const connectCall = async () => {
+    if (!client) {
+        setError("Stream client not initialized.");
+        return;
+    }
+    setIsConnecting(true);
+    setError(null);
+    try {
+        const callInstance = client.call("default", roomId);
+        await callInstance.join({ create: true });
+        setCall(callInstance);
+    } catch (e: any) {
+        console.error("Connection error:", e);
+        if (e.name === 'NotAllowedError' || e.message?.includes('Permission denied')) {
+            setError("Camera and microphone access denied. Please check your browser permissions.");
+        } else if (e.message?.includes('could not start video source')) {
+            setError("Failed to get video stream. The camera may already be in use by another tab or application.");
+        } else {
+            setError(e.message || "Failed to join call");
+        }
+    } finally {
+        setIsConnecting(false);
+    }
+  };
 
   if (error) {
     return (
-      <div className="flex-1 flex items-center justify-center text-red-500">
+      <div className="flex-1 flex flex-col items-center justify-center text-red-500">
         Video Call Error: {error}
-      </div>
-    );
-  }
-  if (!client || !call) {
-    return (
-      <div className="flex-1 flex items-center justify-center text-gray-400">
-        Connecting to video call…
+        <button onClick={connectCall} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+            Retry
+        </button>
       </div>
     );
   }
 
+  if (!client) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+        {!token ? 'Fetching access token...' : 'Initializing client...'}
+      </div>
+    )
+  }
+
+  if (!call) {
+    return (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+            <button onClick={connectCall} disabled={isConnecting} className="px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400">
+                {isConnecting ? 'Connecting...' : 'Connect Video Call'}
+            </button>
+        </div>
+    )
+  }
+
   return (
-    <StreamVideo client={client}>
+    <StreamVideo client={client!}>
       <StreamCall call={call}>
         <StreamTheme>
           <VideoCallUI />
@@ -113,7 +153,7 @@ function VideoCallUI() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 min-h-0">
-        <SpeakerLayout participantsBarPosition="bottom" />
+        <PaginatedGridLayout />
       </div>
       <div className="border-t border-gray-200">
         <CallControls />

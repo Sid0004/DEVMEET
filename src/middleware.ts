@@ -15,6 +15,7 @@ const securityHeaders = {
     "wss://api.liveblocks.io https://api.liveblocks.io " +
     "https://hint.stream-io-video.com " +
     "wss://video-stream.getstream.io https://video-stream.getstream.io " +
+    "wss://*.stream-io-video.com https://*.stream-io-video.com " +
     "wss://video.stream-io-api.com https://video.stream-io-api.com; " +
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
   "style-src 'self' 'unsafe-inline'; " +
