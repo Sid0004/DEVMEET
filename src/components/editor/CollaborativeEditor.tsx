@@ -153,55 +153,53 @@ export function CollaborativeEditor() {
         </div>
       </div>
 
-      <div className={styles.mainSplit}>
-        <div className={styles.leftPane}>
-          <div className={styles.splitContainer}>
-            <PanelGroup direction="vertical" className={styles.codePane}>
-              <Panel
-                minSize={40}
-                defaultSize={60}
-                className="flex flex-col min-h-[180px] border-b border-gray-200 bg-white dark:bg-[#18181b]"
-              >
-                <div className={styles.editorContainer} ref={ref}></div>
-              </Panel>
+      <div className={styles.leftPane}>
+        <div className={styles.splitContainer}>
+          <PanelGroup direction="vertical" className={styles.codePane}>
+            <Panel
+              minSize={40}
+              defaultSize={60}
+              className="flex flex-col min-h-[180px]"
+            >
+              <div className={styles.editorContainer} ref={ref}></div>
+            </Panel>
 
-              <PanelResizeHandle className={styles.resizableHandle} />
+            <PanelResizeHandle className={styles.resizableHandle} />
 
-              <Panel minSize={20} defaultSize={40} className={styles.outputPane}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-700 dark:text-gray-200">
-                    {showOutput ? "Output" : "Input"}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => setShowOutput((prev) => !prev)}>
-                      Toggle {showOutput ? "Input" : "Output"}
-                    </Button>
-                    <button
-                      onClick={handleExecute}
-                      disabled={isExecuting || !languageId}
-                      className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm w-[70px]"
-                    >
-                      {isExecuting ? "Running..." : "Run"}
-                    </button>
-                  </div>
+            <Panel minSize={20} defaultSize={40} className={styles.outputPane}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold">
+                  {showOutput ? "Output" : "Input"}
+                </span>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => setShowOutput((prev) => !prev)}>
+                    Toggle {showOutput ? "Input" : "Output"}
+                  </Button>
+                  <button
+                    onClick={handleExecute}
+                    disabled={isExecuting || !languageId}
+                    className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm w-[70px]"
+                  >
+                    {isExecuting ? "Running..." : "Run"}
+                  </button>
                 </div>
+              </div>
 
-                {showOutput ? (
-                  <pre className="text-gray-800 dark:text-gray-100 whitespace-pre-wrap text-sm bg-white dark:bg-[#23272f] rounded p-2 border min-h-[40px] overflow-auto">
-                    {output || <span className="text-gray-400 italic">(Output will appear here)</span>}
-                  </pre>
-                ) : (
-                  <textarea
-                    className="text-gray-800 dark:text-gray-100 text-sm bg-white dark:bg-[#23272f] rounded p-2 border min-h-[100px] w-full resize-none"
-                    placeholder="Type input data or parameters here…"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    rows={6}
-                  />
-                )}
-              </Panel>
-            </PanelGroup>
-          </div>
+              {showOutput ? (
+                <pre className="whitespace-pre-wrap text-sm rounded p-2 border min-h-[40px] overflow-auto bg-background">
+                  {output || <span className="text-muted-foreground italic">(Output will appear here)</span>}
+                </pre>
+              ) : (
+                <textarea
+                  className="text-sm rounded p-2 border min-h-[100px] w-full resize-none bg-background"
+                  placeholder="Type input data or parameters here…"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  rows={6}
+                />
+              )}
+            </Panel>
+          </PanelGroup>
         </div>
       </div>
     </div>

@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
+
+// Simple in-memory rate limiter
+const rateLimitStore: Record<string, { count: number; timestamp: number }> = {};
+const RATE_LIMIT_DURATION = 60000; // 1 minute
+const RATE_LIMIT_COUNT = 15; // 15 requests per minute
 
 interface CodeExecutionRequest {
   code: string;
@@ -44,11 +51,32 @@ const PISTON_LANGUAGE_MAP: { [key: number]: string } = {
 };
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user._id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const userId = session.user._id;
+
+  // Rate limiting
+  const now = Date.now();
+  const userRequests = rateLimitStore[userId] || { count: 0, timestamp: now };
+
+  if (now - userRequests.timestamp > RATE_LIMIT_DURATION) {
+    userRequests.count = 1;
+    userRequests.timestamp = now;
+  } else {
+    userRequests.count++;
+  }
+  rateLimitStore[userId] = userRequests;
+
+  if (userRequests.count > RATE_LIMIT_COUNT) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     // Parse and validate request body
     const body = await req.json() as CodeExecutionRequest;
     const { code, languageId, stdin } = body;
-    console.log("Received code:", code, "languageId:", languageId, "stdin:", stdin);
 
     // Input validation
     if (!code || typeof code !== "string" || code.trim().length === 0) {

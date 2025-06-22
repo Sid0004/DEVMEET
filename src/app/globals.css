@@ -196,3 +196,18 @@ html {
 html body {
   padding-top: 75px !important;
 }
+
+.my-theme {
+  --str-video__primary-color: #3b82f6;
+  --str-video__background-color: transparent;
+  --str-video__text-color: #1f2937;
+  --str-video__icon-color: #1f2937;
+  --str-video__button-border-radius: 0.5rem;
+  --str-video__participant-border-radius: 0.5rem;
+  --str-video__popup-border-radius: 0.75rem;
+
+  &.dark {
+    --str-video__text-color: #f9fafb;
+    --str-video__icon-color: #f9fafb;
+  }
+}

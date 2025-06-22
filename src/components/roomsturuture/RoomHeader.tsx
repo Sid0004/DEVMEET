@@ -23,15 +23,15 @@ export default function RoomHeader({ roomId }: { roomId: string }) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-white rounded-xl shadow border border-gray-200">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-card text-card-foreground rounded-xl shadow-md border">
       <div className="flex flex-col sm:flex-row items-center gap-4">
-        <span className="font-semibold text-lg text-blue-700 truncate max-w-xs" title={roomId}>
+        <span className="font-semibold text-lg text-primary truncate max-w-xs" title={roomId}>
           Room: {roomId}
         </span>
         <Avatars />
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" className="w-[90px]"   onClick={handleCopy}>
+        <Button variant="outline" className="w-[90px]" onClick={handleCopy}>
           {copied ? "Copied!" : "Copy Link"}
         </Button>
         <Button variant="destructive" className="w-[90px]" onClick={handleLeave}>

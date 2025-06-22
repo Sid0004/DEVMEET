@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import * as Y from "yjs";
+import { Undo, Redo } from "lucide-react";
 
 type Language = {
   id: number;
@@ -49,10 +50,10 @@ export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 p-1 bg-gray-100 border-b border-gray-300">
+    <div className="flex items-center gap-2 p-2 bg-card border-b">
       {/* Language Dropdown */}
       <select
-        className="text-sm p-1 rounded border border-gray-300"
+        className="text-sm p-1.5 rounded-md border bg-background text-foreground focus:ring-2 focus:ring-primary"
         value={language}
         onChange={(e) => onLanguageChange(e.target.value)}
         aria-label="Select language"
@@ -73,76 +74,21 @@ export function Toolbar({ yUndoManager, language, onLanguageChange }: Props) {
 
       {/* Undo */}
       <button
-        className="p-1 hover:bg-gray-200 rounded"
+        className="p-1.5 hover:bg-accent rounded-md"
         onClick={() => yUndoManager.undo()}
         aria-label="undo"
       >
-        <UndoIcon />
+        <Undo size={16} />
       </button>
 
       {/* Redo */}
       <button
-        className="p-1 hover:bg-gray-200 rounded"
+        className="p-1.5 hover:bg-accent rounded-md"
         onClick={() => yUndoManager.redo()}
         aria-label="redo"
       >
-        <RedoIcon />
+        <Redo size={16} />
       </button>
     </div>
-  );
-}
-
-// Icon components
-function UndoIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4 6h6a3 3 0 0 1 3 3 3 3 0 0 1-3 3H8.91"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5.5 3.5 3 6l2.5 2.5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function RedoIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 6H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3h1.09"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10.5 3.5 13 6l-2.5 2.5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

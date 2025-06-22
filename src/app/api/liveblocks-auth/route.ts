@@ -15,13 +15,6 @@ export async function POST(request: NextRequest): Promise<Response> {
       return new Response("Unauthorized - No token", { status: 401 });
     }
 
-    console.log("Token received:", { 
-      _id: token._id, 
-      username: token.username, 
-      email: token.email,
-      name: token.name 
-    });
-
     if (!token._id) {
       console.error("No _id in token");
       return new Response("Unauthorized - No user ID", { status: 401 });
@@ -31,13 +24,12 @@ export async function POST(request: NextRequest): Promise<Response> {
     const userName = token.username || token.name || token.email || 'Anonymous';
 
     const { room } = await request.json();
-    console.log("Room requested:", room);
 
     const session = liveblocks.prepareSession(token._id, {
       userInfo: {
         name: userName,
         color: "#85DBF0", // You can make this dynamic later
-        picture: "https://liveblocks.io/avatars/avatar-1.png",
+        picture: token.avatar || "/default-avatar.png",
       },
     });
 
@@ -45,7 +37,6 @@ export async function POST(request: NextRequest): Promise<Response> {
     session.allow("*", session.FULL_ACCESS);
 
     const { body, status } = await session.authorize();
-    console.log("Liveblocks auth response status:", status);
     
     return new Response(body, { status });
   } catch (error) {

@@ -13,6 +13,7 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
+import { THEME } from "./theme";
 
 const API_KEY = process.env.NEXT_PUBLIC_STREAM_VIDEO_API_KEY!;
 const REGION = "ap-south-1"; // Mumbai region
@@ -66,7 +67,6 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
           body: JSON.stringify({ userId: user.id }),
         });
         const data = await resp.json();
-        console.log("Got stream token:", data.token);
  
         if (data.token) setToken(data.token);
         else setError(data.error || "Failed to get token");
@@ -106,29 +106,46 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-red-500">
-        Video Call Error: {error}
-        <button onClick={connectCall} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+      <div className="flex-1 flex flex-col items-center justify-center text-red-500 p-4">
+        <div className="text-center">
+          <div className="text-sm font-medium mb-2">Video Call Error</div>
+          <div className="text-xs text-gray-500 mb-4">{error}</div>
+          <button onClick={connectCall} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors">
             Retry
-        </button>
+          </button>
+        </div>
       </div>
     );
   }
 
   if (!client) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-        {!token ? 'Fetching access token...' : 'Initializing client...'}
+      <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-4">
+        <div className="text-center">
+          <div className="animate-pulse mb-2">
+            {!token ? '🔑' : '⚡'}
+          </div>
+          <div className="text-sm">
+            {!token ? 'Fetching access token...' : 'Initializing client...'}
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!call) {
     return (
-        <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-            <button onClick={connectCall} disabled={isConnecting} className="px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400">
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-4">
+            <div className="text-center">
+              <div className="text-2xl mb-4">📹</div>
+              <button 
+                onClick={connectCall} 
+                disabled={isConnecting} 
+                className="px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors disabled:cursor-not-allowed"
+              >
                 {isConnecting ? 'Connecting...' : 'Connect Video Call'}
-            </button>
+              </button>
+            </div>
         </div>
     )
   }
@@ -136,7 +153,7 @@ export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   return (
     <StreamVideo client={client!}>
       <StreamCall call={call}>
-        <StreamTheme>
+        <StreamTheme as="main" className="my-theme">
           <VideoCallUI />
         </StreamTheme>
       </StreamCall>
@@ -148,14 +165,21 @@ function VideoCallUI() {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
   if (callingState !== CallingState.JOINED) {
-    return <div className="flex-1 flex items-center justify-center text-gray-400">Joining…</div>;
+    return (
+      <div className="flex-1 flex items-center justify-center text-gray-400 p-4">
+        <div className="text-center">
+          <div className="animate-spin text-2xl mb-2">🔄</div>
+          <div className="text-sm">Joining call...</div>
+        </div>
+      </div>
+    );
   }
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 p-2">
         <PaginatedGridLayout />
       </div>
-      <div className="border-t border-gray-200">
+      <div className="border-t border-gray-200 dark:border-gray-700 p-2 flex justify-center">
         <CallControls />
       </div>
     </div>

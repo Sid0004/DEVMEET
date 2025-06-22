@@ -2,15 +2,17 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  border-radius: 16px;
-  background: #f3f4f6;
+  border-radius: 1rem;
+  background-color: var(--color-card);
   width: 100%;
-  
-  height: 100vh;
-  color: #111827;
+  height: 100%;
+  color: var(--color-card-foreground);
   overflow: hidden;
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
   padding: 0;
+}
+.dark .container {
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.2);
 }
 
 .editorHeader {
@@ -28,30 +30,19 @@
   height: 100%;
 }
 .leftPane {
-  width: 50%;
-  min-width: 320px;
-  max-width: 100%;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: 1rem 1.5rem 1.5rem 1.5rem;
   box-sizing: border-box;
-  border-right: 1.5px solid #e5e7eb;
 }
-.dark .leftPane {
-  border-right: 1.5px solid #23272f;
-}
-.rightPane {
-  flex: 1 1 0%;
-  height: 100%;
-  background: transparent;
-}
+
 @media (max-width: 900px) {
   .mainSplit {
     flex-direction: column;
   }
-  .leftPane, .rightPane {
-    width: 100%;
+  .leftPane {
     border-right: none;
     padding: 0.5rem;
   }
@@ -74,21 +65,19 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #fffafa;
+  background: var(--color-background);
   border-radius: 14px;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
   overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
 }
 .dark .codePane {
-  background: #18181b;
-  border: 1px solid #27272a;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.24);
 }
 
 .resizableHandle {
   height: 10px;
-  background: linear-gradient(90deg, #e5e7eb 40%, #cbd5e1 60%);
+  background-color: var(--color-border);
   cursor: row-resize;
   border: none;
   outline: none;
@@ -97,21 +86,16 @@
   align-items: center;
   justify-content: center;
 }
-.dark .resizableHandle {
-  background: linear-gradient(90deg, #27272a 40%, #3f3f46 60%);
-}
+
 .resizableHandle:hover {
-  background: linear-gradient(90deg, #cbd5e1 40%, #a0aec0 60%);
-}
-.dark .resizableHandle:hover {
-  background: linear-gradient(90deg, #3f3f46 40%, #52525b 60%);
+  background-color: var(--color-accent);
 }
 
 .outputPane {
-  background: #f9fafb;
+  background: var(--color-card);
   border-radius: 14px;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   padding: 1rem;
   min-height: 80px;
   display: flex;
@@ -119,9 +103,7 @@
   overflow: auto;
 }
 .dark .outputPane {
-  background: #23272f;
-  border: 1px solid #27272a;
-  color: #e5e7eb;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.24);
 }
 
 @media (max-width: 900px) {
@@ -135,10 +117,7 @@
   position: relative;
   flex-grow: 1;
   min-height: 200px;
-  background: #000000;
+  background: var(--color-background);
   border-radius: 10px;
   overflow: hidden;
-}
-.dark .editorContainer {
-  background: #18181b;
 }
