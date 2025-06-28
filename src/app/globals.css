@@ -190,12 +190,10 @@ body {
     typing 2.5s steps(20, end) forwards,
     blink 0.75s step-end infinite;
 }
-html {
+/* html {
   scroll-behavior: smooth;
-}
-html body {
-  padding-top: 75px !important;
-}
+} */
+   
 
 .my-theme {
   --str-video__primary-color: #3b82f6;
@@ -209,5 +207,46 @@ html body {
   &.dark {
     --str-video__text-color: #f9fafb;
     --str-video__icon-color: #f9fafb;
+  }
+}
+/* body{
+  padding-top: 75px;
+} */
+
+/* Utility class to ensure content is always below the fixed header */
+.main-content-under-header {
+  padding-top: 90px; /* Adjust to match header height */
+}
+
+.topbor {
+  padding-top: 90px;
+}
+
+/* Consistent horizontal page padding */
+.page-padding {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 768px) {
+  .page-padding {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* Vertical spacing between tab contents */
+.tab-content-spacing {
+  margin-bottom: 2rem;
+}
+
+/* Vertical padding between major sections and cards */
+.section-vertical-spacing {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .section-vertical-spacing {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 }

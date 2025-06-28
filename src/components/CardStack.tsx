@@ -26,6 +26,7 @@ const FEATURES = [
 
 const CardStack = () => {
   return (
+    <section className="min-h-[calc(110vh)]">
     <div className={styles.centeredStackArea}>
       <div className={styles.stack}>
         {FEATURES.map((feature, idx) => (
@@ -37,8 +38,8 @@ const CardStack = () => {
             {idx === 0 && (
               <div className={styles.topCardText}>
                 <b>
-                  <span id="desktop-prompt">Hover</span>
-                  <span id="mobile-prompt">Tap</span> for a demo!
+                  <span id="desktop-prompt"></span>
+                  <span id="mobile-prompt">Tap</span> 
                 </b>
                 <br />
                 DevMeet provides a real-time, collaborative coding environment with all the tools you need to succeed.
@@ -56,6 +57,7 @@ const CardStack = () => {
         ))}
       </div>
     </div>
+    </section>
   );
 };
 

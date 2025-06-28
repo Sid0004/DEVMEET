@@ -174,7 +174,7 @@
 }
 
 .card::after {
-  content: "Box";
+  
   position: absolute;
   left: -60%;
   top: 50%;
@@ -353,6 +353,7 @@ p:first-of-type {
 }
 
 .centeredStackArea {
+ 
   display: flex;
   align-items: center;
   justify-content: center;

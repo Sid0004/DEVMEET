@@ -28,24 +28,24 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg h-[75px] backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-[100] text-white shadow-lg h-[75px] bg-black/20 backdrop-blur-md border-b border-white/10">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
-        <div className="flex-shrink-0">
-          <Link href="/" className="text-2xl font-extrabold tracking-tight">
+        <div className="flex-shrink-0 ml-[10px]">
+          <Link href="/" className="text-4xl font-extrabold tracking-tight ml-[10px]">
             DevMeet
           </Link>
         </div>
 
         {/* Desktop Navigation - Centered */}
-        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-          <Link href="/room/create-room" className="text-sm hover:text-blue-200 transition-colors">
+        <nav className="hidden md:flex items-center gap-9 absolute left-1/2 transform -translate-x-1/2">
+          <Link href="/room/create-room" className="text-lg hover:text-blue-200 transition-colors">
             Create Room
           </Link>
-          <Link href="/community" className="text-sm hover:text-blue-200 transition-colors">
+          <Link href="/community" className="text-lg hover:text-blue-200 transition-colors">
             Community
           </Link>
-          <Link href="/dashboard" className="text-sm hover:text-blue-200 transition-colors">
+          <Link href="/dashboard" className="text-lg hover:text-blue-200 transition-colors">
             Dashboard
           </Link>
         </nav>
@@ -70,7 +70,7 @@ const Header = () => {
                 ) : (
                   <DefaultAvatar />
                 )}
-                <span className="hidden md:inline text-sm font-medium">
+                <span className="hidden md:inline text-lg font-medium">
                   {session.user?.name || session.user?.email}
                 </span>
                 <ChevronDown size={16} className="hidden md:inline" />
@@ -130,7 +130,7 @@ const Header = () => {
             aria-label="Toggle theme"
             className="text-white hover:text-blue-200 hover:bg-blue-700 w-9 h-9 px-[10px]"
           >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {theme === 'dark' ? <Sun className="h-7 w-7" /> : <Moon className="h-7 w-7" />}
           </Button>
 
           {/* Mobile Menu Button */}
