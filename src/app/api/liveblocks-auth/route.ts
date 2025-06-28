@@ -23,8 +23,6 @@ export async function POST(request: NextRequest): Promise<Response> {
     // Use name as fallback if username is not available
     const userName = token.username || token.name || token.email || 'Anonymous';
 
-    const { room } = await request.json();
-
     const session = liveblocks.prepareSession(token._id, {
       userInfo: {
         name: userName,

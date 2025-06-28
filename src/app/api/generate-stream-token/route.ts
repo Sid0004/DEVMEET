@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const token = streamServerClient.createToken(userId);
     return NextResponse.json({ token });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
     return NextResponse.json({ error: 'Unable to generate token' }, { status: 500 });
   }

@@ -294,10 +294,6 @@
   content: "Share & Invite";
 }
 
-p:first-of-type {
-  margin-block-start: 0;
-}
-
 @media (hover: hover) {
   #mobile-prompt {
     display: none;

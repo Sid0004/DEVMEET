@@ -43,10 +43,10 @@ export async function GET() {
   try {
     // Return the predefined list of Piston supported languages
     return NextResponse.json(PISTON_LANGUAGES, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Languages API error:", error);
     return NextResponse.json(
-      { error: error.message || "Unexpected error" },
+      { error: error instanceof Error ? error.message : "Unexpected error" },
       { status: 500 }
     );
   }

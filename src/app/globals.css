@@ -250,3 +250,7 @@ body {
     padding-bottom: 3rem;
   }
 }
+
+p:first-of-type {
+  margin-block-start: 0;
+}

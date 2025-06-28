@@ -16,7 +16,6 @@ import {
   Globe, 
   Loader2,
   ArrowRight,
-  ArrowLeft,
   Sparkles,
   Video,
   MessageSquare,

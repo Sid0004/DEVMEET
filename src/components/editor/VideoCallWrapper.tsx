@@ -13,10 +13,8 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import { THEME } from "./theme";
 
 const API_KEY = process.env.NEXT_PUBLIC_STREAM_VIDEO_API_KEY!;
-const REGION = "ap-south-1"; // Mumbai region
 
 export default function VideoCallWrapper({ roomId }: { roomId: string }) {
   const [user] = useState<User>(() => {

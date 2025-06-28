@@ -10,11 +10,10 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const limit = searchParams.get('limit');
 
-    let query: any = {};
+    let query: Record<string, any> = {};
     if (category) {
       query.category = category;
     }
-
     let eventsQuery = Event.find(query)
       .sort({ date: 1, time: 1 })
       .select('title description date time location attendees maxAttendees category tags createdBy');

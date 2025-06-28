@@ -6,20 +6,11 @@ import {
   Calendar, 
   MessageSquare, 
   TrendingUp, 
-  Star, 
   MapPin, 
   Clock, 
-  UserPlus,
   Search,
-  Filter,
-  BookOpen,
-  Code,
-  Trophy,
-  Heart,
-  Share2,
-  MoreHorizontal,
-  Eye,
-  Loader2
+  Loader2,
+  Trophy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

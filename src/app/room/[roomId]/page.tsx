@@ -13,7 +13,7 @@ import { Loading } from "@/components/Loading";
 
 export default function RoomPage() {
   const params = useParams();
-  const roomId = params.roomId as string;
+  const roomId = params.roomId as unknown as string;
   const { data: session, status } = useSession();
 
   useEffect(() => {
