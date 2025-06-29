@@ -215,7 +215,7 @@ body {
 
 /* Utility class to ensure content is always below the fixed header */
 .main-content-under-header {
-  padding-top: 90px; /* Adjust to match header height */
+  padding-top: 75px;
 }
 
 .topbor {

@@ -6,7 +6,7 @@ const nextConfig = withBundleAnalyzer({
 })(
   {
     images: {
-      domains: ['avatars.githubusercontent.com'],
+      domains: ['avatars.githubusercontent.com', 'randomuser.me'],
     },
     eslint: {
       ignoreDuringBuilds: true,

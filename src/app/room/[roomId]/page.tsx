@@ -29,7 +29,7 @@ export default function RoomPage() {
   return (
     <Room roomId={roomId}>
       <ClientSideSuspense fallback={<Loading />}>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen main-content-under-header">
           <RoomHeader roomId={roomId} />
           <div className="flex-1 flex flex-col lg:flex-row p-4 gap-4">
             <PanelGroup direction="horizontal" className="flex-1">
